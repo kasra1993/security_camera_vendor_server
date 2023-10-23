@@ -3,9 +3,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -19,4 +19,4 @@ jobs:
       with:
         node-version: 16.x
     - run: npm install
-    - run: pm2 restart app-name
+
