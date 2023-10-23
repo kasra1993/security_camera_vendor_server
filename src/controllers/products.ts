@@ -32,7 +32,7 @@ export const deleteProduct = async (
     const { id } = req.params;
     const product = await deleteProductById(id);
     if (product.image) {
-      const prevImage = product.image.replace(url + "/", "");
+      const prevImage = product!.image.replace(url + "/", "");
       fs.unlink("public/" + prevImage, (err: any) => {
         if (err) {
           throw err;
@@ -43,8 +43,8 @@ export const deleteProduct = async (
     }
 
     await subCategoryModel.updateMany(
-      { _id: product.subcategories },
-      { $pull: { products: product._id } }
+      { _id: product!.subcategories },
+      { $pull: { products: product!._id } }
     );
 
     return res.json(product);
@@ -63,7 +63,7 @@ export const updateProduct = async (
     const _id = req.params.id;
     const updatedProduct = {
       ...req.body,
-      image: url + "/product/" + req.file.filename,
+      image: url + "/product/" + req.file!.filename,
     };
     if (!updatedProduct) {
       return res.sendStatus(400);
@@ -96,7 +96,7 @@ export const updateProduct = async (
     const newProduct = await oldProduct!.save();
 
     if (oldProduct!.image) {
-      fs.unlink("public/" + prevImage, (err: any) => {
+      fs.unlink("public/" + prevImage!, (err: any) => {
         if (err) {
           throw err;
         }
@@ -130,7 +130,7 @@ export const createProduct = async (
   const url = req.protocol + "://" + req.get("host");
   const newProduct = new ProductModel({
     ...req.body,
-    image: url + "/product/" + req.file.filename,
+    image: url + "/product/" + req.file!.filename,
   });
 
   try {
