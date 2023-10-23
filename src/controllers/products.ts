@@ -31,7 +31,7 @@ export const deleteProduct = async (
   try {
     const { id } = req.params;
     const product = await deleteProductById(id);
-    if (product.image) {
+    if (product!.image) {
       const prevImage = product!.image.replace(url + "/", "");
       fs.unlink("public/" + prevImage, (err: any) => {
         if (err) {
