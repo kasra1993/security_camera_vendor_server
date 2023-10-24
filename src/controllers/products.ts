@@ -10,7 +10,7 @@ import { subCategoryModel } from "../db/subCategories";
 import { difference } from "../helpers";
 const fs = require("fs");
 
-interface MulterRequest extends Request {
+interface MulterRequest extends express.Request {
   file: any;
 }
 
@@ -72,7 +72,8 @@ export const updateProduct = async (
 
     const updatedProduct = <any>{
       ...req.body,
-      image: url + "/product/" + req.file.filename,
+      image:
+        url + "/product/" + (req as unknown as MulterRequest).file.filename,
     };
 
     if (!updatedProduct) {
