@@ -17,12 +17,12 @@
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/lodash": "^4.14.196",
+    "@types/multer": "^1.4.9",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@types/multer": "^1.4.7",
     "@types/node": "^20.5.2",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
