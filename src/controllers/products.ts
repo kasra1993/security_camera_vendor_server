@@ -61,10 +61,12 @@ export const updateProduct = async (
 
   try {
     const _id = req.params.id;
-    const updatedProduct = {
-      ...req.body,
-      image: url + "/product/" + req.file?.filename,
-    };
+    if (req.file) {
+      var updatedProduct = {
+        ...req.body,
+        image: url + "/product/" + req.file?.filename,
+      };
+    }
     if (!updatedProduct) {
       return res.sendStatus(400);
     }
@@ -128,10 +130,12 @@ export const createProduct = async (
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
-  const newProduct = new ProductModel({
-    ...req.body,
-    image: url + "/product/" + req.file?.filename,
-  });
+  if (req.file) {
+    var newProduct = new ProductModel({
+      ...req.body,
+      image: url + "/product/" + req.file?.filename,
+    });
+  }
 
   try {
     await newProduct.save();
