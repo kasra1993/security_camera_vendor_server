@@ -23,7 +23,7 @@ export const getAllProducts = async (
   }
 };
 export const deleteProduct = async (
-  req: express.Request<any>,
+  req: express.Request,
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
@@ -54,19 +54,19 @@ export const deleteProduct = async (
   }
 };
 export const updateProduct = async (
-  req: express.Request<any>,
+  req: express.Request,
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
 
   try {
     const _id = req.params.id;
-    if (req.file) {
-      var updatedProduct = <any>{
-        ...req.body,
-        image: url + "/product/" + req.file?.filename,
-      };
-    }
+
+    const updatedProduct = <any>{
+      ...req.body,
+      image: url + "/product/" + req.file.filename,
+    };
+
     if (!updatedProduct) {
       return res.sendStatus(400);
     }
@@ -126,16 +126,15 @@ export const updateProduct = async (
   }
 };
 export const createProduct = async (
-  req: express.Request<any>,
+  req: express.Request,
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
-  if (req.file) {
-    var newProduct = <any>new ProductModel({
-      ...req.body,
-      image: url + "/product/" + req.file?.filename,
-    });
-  }
+
+  const newProduct = <any>new ProductModel({
+    ...req.body,
+    image: url + "/product/" + req.file!.filename,
+  });
 
   try {
     await newProduct.save();
