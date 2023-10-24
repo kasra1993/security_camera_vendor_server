@@ -63,7 +63,7 @@ export const updateProduct = async (
     const _id = req.params.id;
     const updatedProduct = {
       ...req.body,
-      image: url + "/product/" + req.file!.filename,
+      image: url + "/product/" + req.file?.filename,
     };
     if (!updatedProduct) {
       return res.sendStatus(400);
@@ -130,7 +130,7 @@ export const createProduct = async (
   const url = req.protocol + "://" + req.get("host");
   const newProduct = new ProductModel({
     ...req.body,
-    image: url + "/product/" + req.file!.filename,
+    image: url + "/product/" + req.file?.filename,
   });
 
   try {
