@@ -10,10 +10,6 @@ import { subCategoryModel } from "../db/subCategories";
 import { difference } from "../helpers";
 const fs = require("fs");
 
-interface RequestTypes extends Request {
-  file: any;
-}
-
 export const getAllProducts = async (
   req: express.Request,
   res: express.Response
