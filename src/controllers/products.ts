@@ -54,7 +54,11 @@ export const deleteProduct = async (
   }
 };
 export const updateProduct = async (
-  req: express.Request,
+  req: express.Request<{
+    id: any;
+    file: any;
+    params: any;
+  }>,
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
@@ -126,7 +130,7 @@ export const updateProduct = async (
   }
 };
 export const createProduct = async (
-  req: express.Request,
+  req: express.Request<{ file: any }>,
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
