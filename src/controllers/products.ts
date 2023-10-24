@@ -10,6 +10,10 @@ import { subCategoryModel } from "../db/subCategories";
 import { difference } from "../helpers";
 const fs = require("fs");
 
+interface MulterRequest extends Request {
+  file: any;
+}
+
 export const getAllProducts = async (
   req: express.Request,
   res: express.Response
@@ -137,7 +141,7 @@ export const createProduct = async (
 
   const newProduct = <any>new ProductModel({
     ...req.body,
-    image: url + "/product/" + req.file!.filename,
+    image: url + "/product/" + (req as unknown as MulterRequest).file!.filename,
   });
 
   try {
