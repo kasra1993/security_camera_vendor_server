@@ -66,7 +66,7 @@ export const updateProduct = async (
   try {
     const _id = req.params.id;
     if (req.file) {
-      var updatedProduct = {
+      var updatedProduct = <any>{
         ...req.body,
         image: url + "/product/" + req.file?.filename,
       };
@@ -135,7 +135,7 @@ export const createProduct = async (
 ) => {
   const url = req.protocol + "://" + req.get("host");
   if (req.file) {
-    var newProduct = new ProductModel({
+    var newProduct = <any>new ProductModel({
       ...req.body,
       image: url + "/product/" + req.file?.filename,
     });
