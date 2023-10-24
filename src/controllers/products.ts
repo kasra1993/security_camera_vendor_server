@@ -10,6 +10,10 @@ import { subCategoryModel } from "../db/subCategories";
 import { difference } from "../helpers";
 const fs = require("fs");
 
+interface RequestTypes extends Request {
+  file: any;
+}
+
 export const getAllProducts = async (
   req: express.Request,
   res: express.Response
@@ -23,7 +27,7 @@ export const getAllProducts = async (
   }
 };
 export const deleteProduct = async (
-  req: express.Request,
+  req: express.Request<any>,
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
@@ -54,7 +58,7 @@ export const deleteProduct = async (
   }
 };
 export const updateProduct = async (
-  req: express.Request,
+  req: express.Request<any>,
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
@@ -126,7 +130,7 @@ export const updateProduct = async (
   }
 };
 export const createProduct = async (
-  req: express.Request,
+  req: express.Request<any>,
   res: express.Response
 ) => {
   const url = req.protocol + "://" + req.get("host");
