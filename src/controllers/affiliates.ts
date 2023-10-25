@@ -10,6 +10,10 @@ import {
 // const multer = require("multer");
 const fs = require("fs");
 
+interface MulterRequest extends express.Request {
+  file: any;
+}
+
 export const getAllAffiliates = async (
   req: express.Request,
   res: express.Response
@@ -32,7 +36,7 @@ export const deleteAffiliate = async (
     const deletedAffiliate = await deleteAffiliateById(id);
     // console.log(deletedAffiliate, "deleted affiliate");
 
-    const prevImage = deletedAffiliate!.image.replace(url + "/", "");
+    const prevImage = deletedAffiliate?.image?.replace(url + "/", "");
     // console.log(prevImage, "previous image");
 
     fs.unlink("public/" + prevImage, (err: any) => {
@@ -62,11 +66,12 @@ export const updateAffiliate = async (
   try {
     const { id } = req.params;
     const previousAffiliate = await affiliateModel.find({ _id: id });
-    const prevImage = previousAffiliate[0].image.replace(url + "/", "");
+    const prevImage = previousAffiliate[0]?.image?.replace(url + "/", "");
 
     const updatedAffiliate = {
       ...req.body,
-      image: url + "/affiliate/" + req.file.filename,
+      image:
+        url + "/affiliate/" + (req as unknown as MulterRequest).file.filename,
     };
 
     const newAffiliate = await updateAffiliateById(id, updatedAffiliate);
@@ -91,7 +96,8 @@ export const createAffiliate = async (
   const url = req.protocol + "://" + req.get("host");
   const newAffiliate = new affiliateModel({
     ...req.body,
-    image: url + "/affiliate/" + req.file.filename,
+    image:
+      url + "/affiliate/" + (req as unknown as MulterRequest).file.filename,
   });
   // const imageName = req.file.filename;
   // const description = req.body.description;

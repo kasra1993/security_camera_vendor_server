@@ -10,6 +10,10 @@ import {
 // const multer = require("multer");
 const fs = require("fs");
 
+interface MulterRequest extends express.Request {
+  file: any;
+}
+
 export const getAllSolutions = async (
   req: express.Request,
   res: express.Response
@@ -30,10 +34,8 @@ export const deleteSolution = async (
   try {
     const { id } = req.params;
     const deletedSolution = await deleteSolutionById(id);
-    console.log(deletedSolution, "deleted solution");
 
-    const prevImage = deletedSolution.image.replace(url + "/", "");
-    console.log(prevImage, "previous image");
+    var prevImage = deletedSolution?.image?.replace(url + "/", "");
 
     fs.unlink("public/" + prevImage, (err: any) => {
       if (err) {
@@ -62,12 +64,15 @@ export const updateSolution = async (
   try {
     const { id } = req.params;
     const previousSolution = await solutionModel.find({ _id: id });
-    const prevImage = previousSolution[0].image.replace(url + "/", "");
+    if (previousSolution[0]) {
+      var prevImage = previousSolution[0]?.image?.replace(url + "/", "");
+    }
     // console.log(prevImage, "this is prev image");
 
     const updatedSolution = {
       ...req.body,
-      image: url + "/solution/" + req.file.filename,
+      image:
+        url + "/solution/" + (req as unknown as MulterRequest).file.filename,
     };
 
     const newSolution = await updateSolutionById(id, updatedSolution);
@@ -94,7 +99,7 @@ export const createSolution = async (
   const url = req.protocol + "://" + req.get("host");
   const newSolution = new solutionModel({
     ...req.body,
-    image: url + "/solution/" + req.file.filename,
+    image: url + "/solution/" + (req as unknown as MulterRequest).file.filename,
   });
   // const imageName = req.file.filename;
   // const description = req.body.description;

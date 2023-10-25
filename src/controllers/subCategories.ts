@@ -13,6 +13,10 @@ import { categoryModel } from "../db/categories";
 import { ProductModel } from "../db/products";
 // import { stringify } from "querystring";
 
+interface MulterRequest extends express.Request {
+  file: any;
+}
+
 export const getAllSubCategories = async (
   req: express.Request,
   res: express.Response
@@ -34,7 +38,7 @@ export const deleteSubCategory = async (
   try {
     const { id } = req.params;
     const deletedSubCategory = await deleteSubCategoryById(id);
-    const prevImage = deletedSubCategory.image.replace(url + "/", "");
+    const prevImage = deletedSubCategory!.image.replace(url + "/", "");
     fs.unlink("public/" + prevImage, (err: any) => {
       if (err) {
         throw err;
@@ -43,12 +47,12 @@ export const deleteSubCategory = async (
       console.log("Delete File successfully.");
     });
     await categoryModel.updateMany(
-      { _id: deletedSubCategory.categories },
-      { $pull: { subcategories: deletedSubCategory._id } }
+      { _id: deletedSubCategory!.categories },
+      { $pull: { subcategories: deletedSubCategory!._id } }
     );
     await ProductModel.updateMany(
-      { _id: deletedSubCategory.products },
-      { $pull: { subcategories: deletedSubCategory._id } }
+      { _id: deletedSubCategory!.products },
+      { $pull: { subcategories: deletedSubCategory!._id } }
     );
 
     return res.status(200).json("subCategory got deleted").end();
@@ -68,14 +72,15 @@ export const updateSubCategory = async (
 
     const updatedSubCategory = {
       ...req.body,
-      image: url + "/subcategory/" + req.file.filename,
+      image:
+        url + "/subcategory/" + (req as unknown as MulterRequest).file.filename,
     };
     if (!updatedSubCategory) {
       return res.sendStatus(400);
     }
-    const newCategories = updatedSubCategory.categories || [];
+    const newCategories = updatedSubCategory!.categories || [];
     const oldSubCategory = await subCategoryModel.findOne({ _id });
-    const oldCategories = oldSubCategory.categories;
+    const oldCategories = oldSubCategory?.categories;
     // these are new ids turned into objectIDs with looping
     let newCategoryIds = [];
     if (newCategories instanceof Array) {
@@ -86,9 +91,11 @@ export const updateSubCategory = async (
       newCategoryIds.push(new mongoose.Types.ObjectId(newCategories._id));
     }
 
-    const prevImage = oldSubCategory.image.replace(url + "/", "");
-    Object.assign(oldSubCategory, updatedSubCategory);
-    const newSubCategory = await oldSubCategory.save();
+    const prevImage = oldSubCategory?.image?.replace(url + "/", "");
+    if (oldSubCategory) {
+      Object.assign(oldSubCategory, updatedSubCategory);
+    }
+    const newSubCategory = await oldSubCategory!.save();
 
     fs.unlink("public/" + prevImage, (err: any) => {
       if (err) {
@@ -103,11 +110,11 @@ export const updateSubCategory = async (
 
     await categoryModel.updateMany(
       { _id: removed },
-      { $pull: { subCategories: oldSubCategory._id } }
+      { $pull: { subCategories: oldSubCategory!._id } }
     );
     await categoryModel.updateMany(
       { _id: added },
-      { $addToSet: { subCategories: oldSubCategory._id } }
+      { $addToSet: { subCategories: oldSubCategory!._id } }
     );
 
     return res.status(200).json(newSubCategory).end();
@@ -124,7 +131,8 @@ export const createSubCategory = async (
   const url = req.protocol + "://" + req.get("host");
   const newSubCategory = new subCategoryModel({
     ...req.body,
-    image: url + "/subcategory/" + req.file.filename,
+    image:
+      url + "/subcategory/" + (req as unknown as MulterRequest).file.filename,
   });
 
   try {

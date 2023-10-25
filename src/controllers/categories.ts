@@ -10,6 +10,10 @@ import { subCategoryModel } from "../db/subCategories";
 // const multer = require("multer");
 const fs = require("fs");
 
+interface MulterRequest extends express.Request {
+  file: any;
+}
+
 export const getAllCategories = async (
   req: express.Request,
   res: express.Response
@@ -31,7 +35,7 @@ export const deleteCategory = async (
     const { id } = req.params;
     const deletedCategory = await deleteCategoryById(id);
 
-    const prevImage = deletedCategory!.image.replace(url + "/", "");
+    const prevImage = deletedCategory?.image?.replace(url + "/", "");
 
     fs.unlink("public/" + prevImage!, (err: any) => {
       if (err) {
@@ -60,11 +64,12 @@ export const updateCategory = async (
   try {
     const { id } = req.params;
     const previousCategory = await categoryModel.find({ _id: id });
-    const prevImage = previousCategory[0].image.replace(url + "/", "");
+    const prevImage = previousCategory[0]?.image?.replace(url + "/", "");
 
     const updatedCategory = {
       ...req.body,
-      image: url + "/category/" + req.file.filename,
+      image:
+        url + "/category/" + (req as unknown as MulterRequest).file.filename,
     };
 
     const newCategory = await updateCategoryById(id, updatedCategory);
@@ -89,7 +94,7 @@ export const createCategory = async (
   const url = req.protocol + "://" + req.get("host");
   const newCategory = new categoryModel({
     ...req.body,
-    image: url + "/category/" + req.file.filename,
+    image: url + "/category/" + (req as unknown as MulterRequest).file.filename,
   });
   // const imageName = req.file.filename;
   // const description = req.body.description;
