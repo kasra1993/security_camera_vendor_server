@@ -58,18 +58,14 @@ export const deleteProduct = async (
   }
 };
 export const updateProduct = async (
-  req: express.Request<{
-    id: any;
-    file: any;
-    params: any;
-  }>,
+  req: express.Request,
   res: express.Response
 ) => {
-  // if (req.body || req.file || req.params) {
-  //   console.log(req.body, "body request");
-  //   console.log(req.params, "params request");
-  //   console.log(req.file, "file request");
-  // }
+  if (req.body || req.file || req.params) {
+    console.log(req.body, "body request");
+    console.log(req.params, "params request");
+    console.log(req.file, "file request");
+  }
   const url = req.protocol + "://" + req.get("host");
 
   try {
