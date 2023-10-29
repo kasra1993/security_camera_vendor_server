@@ -64,6 +64,7 @@ export const updateCategory = async (
   //   console.log(req!.params, "params request");
   //   console.log(req!.file, "file request");
   // }
+  console.log(req);
   const url = req.protocol + "://" + req.get("host");
 
   try {
