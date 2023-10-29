@@ -58,7 +58,11 @@ export const deleteProduct = async (
   }
 };
 export const updateProduct = async (
-  req: express.Request,
+  req: express.Request<{
+    id: any;
+    file: any;
+    params: any;
+  }>,
   res: express.Response
 ) => {
   // if (req.body || req.file || req.params) {
