@@ -79,13 +79,15 @@ export const updateCategory = async (
     };
 
     const newCategory = await updateCategoryById(id, updatedCategory);
-    fs.unlink("public/" + prevImage!, (err: any) => {
-      if (err) {
-        throw err;
-      }
 
-      console.log("Delete File successfully.");
-    });
+    prevImage &&
+      fs.unlink("public/" + prevImage!, (err: any) => {
+        if (err) {
+          throw err;
+        }
+
+        console.log("Delete File successfully.");
+      });
     return res.status(200).json(newCategory).end();
   } catch (error) {
     console.log(error);
