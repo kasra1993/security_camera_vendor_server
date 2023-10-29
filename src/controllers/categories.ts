@@ -74,7 +74,7 @@ export const updateCategory = async (
     const updatedCategory = {
       ...req.body,
       image:
-        url + "/category/" + (req as unknown as MulterRequest).file.filename,
+        url + "/category/" + (req as unknown as MulterRequest)!.file!.filename,
     };
 
     const newCategory = await updateCategoryById(id, updatedCategory);
