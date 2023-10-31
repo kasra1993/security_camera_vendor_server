@@ -59,12 +59,6 @@ export const updateCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  // if (req!.body || req!.file || req!.params) {
-  //   console.log(req!.body, "body request");
-  //   console.log(req!.params, "params request");
-  //   console.log(req!.file, "file request");
-  // }
-  console.log(req);
   const url = req.protocol + "://" + req.get("host");
 
   try {
@@ -73,9 +67,13 @@ export const updateCategory = async (
     const prevImage = previousCategory[0]?.image?.replace(url + "/", "");
 
     const updatedCategory = {
-      ...req.body,
+      title: req.body.title || previousCategory[0]?.title,
+      description: req.body.title || previousCategory[0]?.description,
+      subcategories:
+        req.body.subcategories || previousCategory[0]?.subcategories,
+
       image:
-        url + "/category/" + (req as unknown as MulterRequest)!.file!.filename,
+        url + "/category/" + (req as unknown as MulterRequest)!.file!.filename!,
     };
 
     const newCategory = await updateCategoryById(id, updatedCategory);
