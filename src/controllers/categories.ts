@@ -101,17 +101,12 @@ export const createCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  if (req) {
-    console.log(req.body);
-    console.log(req.file);
-  }
-
   const url = req.protocol + "://" + req.get("host");
   const newCategory = new categoryModel({
     ...req.body,
     image: url + "/category/" + (req as unknown as MulterRequest).file.filename,
   });
-
+  console.log(newCategory);
   try {
     await newCategory.save();
 
