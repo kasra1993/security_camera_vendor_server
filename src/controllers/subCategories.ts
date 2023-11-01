@@ -39,13 +39,15 @@ export const deleteSubCategory = async (
     const { id } = req.params;
     const deletedSubCategory = await deleteSubCategoryById(id);
     const prevImage = deletedSubCategory!.image.replace(url + "/", "");
-    fs.unlink("public/" + prevImage, (err: any) => {
-      if (err) {
-        throw err;
-      }
+    if (prevImage) {
+      fs.unlink("public/" + prevImage, (err: any) => {
+        if (err) {
+          throw err;
+        }
 
-      console.log("Delete File successfully.");
-    });
+        console.log("Delete File successfully.");
+      });
+    }
     await categoryModel.updateMany(
       { _id: deletedSubCategory!.categories },
       { $pull: { subcategories: deletedSubCategory!._id } }
@@ -101,14 +103,15 @@ export const updateSubCategory = async (
       Object.assign(oldSubCategory, updatedSubCategory);
     }
     const newSubCategory = await oldSubCategory!.save();
+    if (prevImage) {
+      fs.unlink("public/" + prevImage, (err: any) => {
+        if (err) {
+          throw err;
+        }
 
-    fs.unlink("public/" + prevImage, (err: any) => {
-      if (err) {
-        throw err;
-      }
-
-      console.log("Delete File successfully.");
-    });
+        console.log("Delete File successfully.");
+      });
+    }
 
     const added = difference(newCategoryIds, oldCategories);
     const removed = difference(oldCategories, newCategoryIds);

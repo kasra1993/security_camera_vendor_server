@@ -36,14 +36,15 @@ export const deleteSolution = async (
     const deletedSolution = await deleteSolutionById(id);
 
     var prevImage = deletedSolution?.image?.replace(url + "/", "");
+    if (prevImage) {
+      fs.unlink("public/" + prevImage, (err: any) => {
+        if (err) {
+          throw err;
+        }
 
-    fs.unlink("public/" + prevImage, (err: any) => {
-      if (err) {
-        throw err;
-      }
-
-      console.log("Delete File successfully.");
-    });
+        console.log("Delete File successfully.");
+      });
+    }
 
     // await subSolutionModel.updateMany(
     //   { _id: deletedSolution.subsolutions },
@@ -81,13 +82,15 @@ export const updateSolution = async (
     };
 
     const newSolution = await updateSolutionById(id, updatedSolution);
-    fs.unlink("public/" + prevImage, (err: any) => {
-      if (err) {
-        throw err;
-      }
+    if (prevImage) {
+      fs.unlink("public/" + prevImage, (err: any) => {
+        if (err) {
+          throw err;
+        }
 
-      console.log("Delete File successfully.");
-    });
+        console.log("Delete File successfully.");
+      });
+    }
     return res.status(200).json(newSolution).end();
   } catch (error) {
     console.log(error);

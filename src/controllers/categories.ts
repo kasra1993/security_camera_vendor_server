@@ -36,14 +36,15 @@ export const deleteCategory = async (
     const deletedCategory = await deleteCategoryById(id);
 
     const prevImage = deletedCategory?.image?.replace(url + "/", "");
+    if (prevImage) {
+      fs.unlink("public/" + prevImage!, (err: any) => {
+        if (err) {
+          throw err;
+        }
 
-    fs.unlink("public/" + prevImage!, (err: any) => {
-      if (err) {
-        throw err;
-      }
-
-      console.log("Delete File successfully.");
-    });
+        console.log("Delete File successfully.");
+      });
+    }
 
     await subCategoryModel.updateMany(
       { _id: deletedCategory!.subcategories },

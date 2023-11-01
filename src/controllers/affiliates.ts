@@ -39,14 +39,15 @@ export const deleteAffiliate = async (
 
     const prevImage = deletedAffiliate?.image?.replace(url + "/", "");
     // console.log(prevImage, "previous image");
+    if (prevImage) {
+      fs.unlink("public/" + prevImage, (err: any) => {
+        if (err) {
+          throw err;
+        }
 
-    fs.unlink("public/" + prevImage, (err: any) => {
-      if (err) {
-        throw err;
-      }
-
-      console.log("Delete File successfully.");
-    });
+        console.log("Delete File successfully.");
+      });
+    }
 
     // await subCategoryModel.updateMany(
     //   { _id: deletedAffiliate.subcategories },
@@ -82,13 +83,16 @@ export const updateAffiliate = async (
     };
 
     const newAffiliate = await updateAffiliateById(id, updatedAffiliate);
-    fs.unlink("public/" + prevImage, (err: any) => {
-      if (err) {
-        throw err;
-      }
+    if (prevImage) {
+      fs.unlink("public/" + prevImage, (err: any) => {
+        if (err) {
+          throw err;
+        }
 
-      console.log("Delete File successfully.");
-    });
+        console.log("Delete File successfully.");
+      });
+    }
+
     return res.status(200).json(newAffiliate).end();
   } catch (error) {
     console.log(error);
