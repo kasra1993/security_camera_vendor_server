@@ -6,10 +6,10 @@ import {
   createCategory,
   getCategory,
 } from "../controllers/categories";
-import { isAuthenticated, isOwner } from "../middlewares";
+// import { isAuthenticated, isOwner } from "../middlewares";
 const multer = require("multer");
 const uuidv4 = require("uuid/v4");
-const DIR = "./public/category/";
+const DIR = "./public/category";
 const storage = multer.diskStorage({
   destination: (req: any, file: any, cb: (arg0: any, arg1: any) => void) => {
     cb(null, DIR);

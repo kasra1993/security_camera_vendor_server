@@ -106,15 +106,7 @@ export const createCategory = async (
     ...req.body,
     image: url + "/category/" + (req as unknown as MulterRequest).file.filename,
   });
-  // const imageName = req.file.filename;
-  // const description = req.body.description;
-  // const title = req.body.title;
-  // const subcategories = req.body.subCategories;
 
-  // Save this data to a database probably
-
-  // console.log(description, title, subcategories);
-  // const upload = multer({ dest: "images/" });
   try {
     await newCategory.save();
 

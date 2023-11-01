@@ -135,7 +135,6 @@ export const createSubCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  console.log(req.body, "this is the request body");
   const url = req.protocol + "://" + req.get("host");
   const newSubCategory = new subCategoryModel({
     ...req.body,
