@@ -1,6 +1,6 @@
 import express from "express";
 var mongoose = require("mongoose");
-const fs = require("fs");
+// const fs = require("fs");
 import {
   getSubCategories,
   getSubCategoryById,
@@ -11,14 +11,14 @@ import { subCategoryModel } from "../db/subCategories";
 import { difference } from "../helpers";
 import { categoryModel } from "../db/categories";
 import { ProductModel } from "../db/products";
-import { Description } from "@material-ui/icons";
+// import { Description } from "@material-ui/icons";
 const cloudinary = require("../utils/cloudinary");
 
 // import { stringify } from "querystring";
 
-interface MulterRequest extends express.Request {
-  file: any;
-}
+// interface MulterRequest extends express.Request {
+//   file: any;
+// }
 
 export const getAllSubCategories = async (
   req: express.Request,
