@@ -46,9 +46,11 @@ var upload = multer({
 export default (router: express.Router) => [
   router.get("/categories", getAllCategories),
   router.delete("/category/:id", deleteCategory),
-  router.patch("/category/:id", upload.single("image"), updateCategory),
+  // router.patch("/category/:id", upload.single("image"), updateCategory),
+  router.patch("/category/:id", updateCategory),
   // router.post("/createCategory", isAuthenticated, isOwner, createCategory),
-  router.post("/createCategory", upload.single("image"), createCategory),
+  // router.post("/createCategory", upload.single("image"), createCategory),
+  router.post("/createCategory", createCategory),
   // router.post("/createCategory", createCategory),
   router.get("/getCategory/:id", getCategory),
   // router.get("/getCategory/:id", isAuthenticated, isOwner, getCategory),

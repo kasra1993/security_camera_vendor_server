@@ -8,11 +8,15 @@ import {
 } from "../db/categories";
 import { subCategoryModel } from "../db/subCategories";
 // const multer = require("multer");
-const fs = require("fs");
+// const fs = require("fs");
+const cloudinary = require("../utils/cloudinary");
 
 interface MulterRequest extends express.Request {
   file: any;
 }
+// interface previousCategory extends express. {
+//   image: any;
+// }
 
 export const getAllCategories = async (
   req: express.Request,
@@ -30,21 +34,28 @@ export const deleteCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const url = req.protocol + "://" + req.get("host");
+  // const url = req.protocol + "://" + req.get("host");
   try {
     const { id } = req.params;
     const deletedCategory = await deleteCategoryById(id);
+    // console.log(deletedCategory, "deleted category");
 
-    const prevImage = deletedCategory?.image?.replace(url + "/", "");
-    if (prevImage) {
-      fs.unlink("public/" + prevImage!, (err: any) => {
-        if (err) {
-          throw err;
-        }
-
-        console.log("Delete File successfully.");
-      });
+    if (deletedCategory.image) {
+      const imgId = deletedCategory.image.public_id;
+      if (imgId) {
+        await cloudinary.uploader.destroy(imgId);
+      }
     }
+    // const prevImage = deletedCategory?.image?.replace(url + "/", "");
+    // if (prevImage) {
+    //   fs.unlink("public/" + prevImage!, (err: any) => {
+    //     if (err) {
+    //       throw err;
+    //     }
+
+    //     console.log("Delete File successfully.");
+    //   });
+    // }
 
     await subCategoryModel.updateMany(
       { _id: deletedCategory!.subcategories },
@@ -56,40 +67,60 @@ export const deleteCategory = async (
     return res.sendStatus(400);
   }
 };
+
 export const updateCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const url = req.protocol + "://" + req.get("host");
+  // const url = req.protocol + "://" + req.get("host");
 
   try {
     const { id } = req.params;
-    const previousCategory = await categoryModel.find({ _id: id });
-    const prevImage = previousCategory[0]?.image?.replace(url + "/", "");
 
-    const updatedCategory = {
-      title: req.body.title || previousCategory[0]?.title,
-      description: req.body.title || previousCategory[0]?.description,
-      subcategories:
-        req.body.subcategories || previousCategory[0]?.subcategories,
+    const previousCategory: any = await categoryModel.find({
+      _id: id,
+    });
+    // console.log(previousCategory[0], "prev category");
+    const updatedCategory: any = {
+      title: req.body.title ? req.body.title : previousCategory[0]?.title,
+      description: req.body.description
+        ? req.body.description
+        : previousCategory[0]?.description,
+      subcategories: previousCategory[0]?.subcategories,
 
-      image:
-        url +
-          "/category/" +
-          (req as unknown as MulterRequest)!.file!.filename! ||
-        previousCategory[0].image,
+      // image:
+      //   url +
+      //     "/category/" +
+      //     (req as unknown as MulterRequest)!.file!.filename! ||
+      //   previousCategory[0].image,
     };
+
+    if (previousCategory.image !== "") {
+      const imgId = previousCategory[0].image.public_id;
+      if (imgId) {
+        await cloudinary.uploader.destroy(imgId);
+      }
+      const newImg = await cloudinary.uploader.upload(req.body.image, {
+        folder: "categories",
+      });
+      updatedCategory.image = {
+        public_id: newImg.public_id,
+        url: newImg.secure_url,
+      };
+    }
+    // const prevImage = previousCategory[0]?.image?.replace(url + "/", "");
+    // console.log(updatedCategory, "updatedCat");
 
     const newCategory = await updateCategoryById(id, updatedCategory);
 
-    prevImage &&
-      fs.unlink("public/" + prevImage!, (err: any) => {
-        if (err) {
-          throw err;
-        }
+    // prevImage &&
+    //   fs.unlink("public/" + prevImage!, (err: any) => {
+    //     if (err) {
+    //       throw err;
+    //     }
 
-        console.log("Delete File successfully.");
-      });
+    //     console.log("Delete File successfully.");
+    //   });
     return res.status(200).json(newCategory).end();
   } catch (error) {
     console.log(error);
@@ -101,13 +132,22 @@ export const createCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const url = req.protocol + "://" + req.get("host");
-  const newCategory = new categoryModel({
-    ...req.body,
-    image: url + "/category/" + (req as unknown as MulterRequest).file.filename,
-  });
-  console.log(newCategory);
   try {
+    const result = await cloudinary.uploader.upload(req.body.image, {
+      folder: "categories",
+    });
+    // console.log(result);
+
+    // const url = req.protocol + "://" + req.get("host");
+    const newCategory = new categoryModel({
+      ...req.body,
+      // image: url + "/category/" + (req as unknown as MulterRequest).file.filename,
+      image: {
+        public_id: result.public_id,
+        url: result.secure_url,
+      },
+    });
+    // console.log(newCategory);
     await newCategory.save();
 
     return res.status(200).json(newCategory).end();

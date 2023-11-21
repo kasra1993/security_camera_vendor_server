@@ -1,13 +1,22 @@
 import mongoose from "mongoose";
 const AffiliateSchema = new mongoose.Schema(
   {
-    image: { type: String, required: false },
-
+    image: {
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
+    },
     lng: { type: Number, required: false },
     lat: { type: Number, required: false },
     name: { type: String, required: true },
     link: { type: String, required: false },
     email: { type: String, required: false },
+    phone: { type: Number, required: false },
     description: { type: String, required: false },
     // subaffiliates: [
     //   {

@@ -6,13 +6,8 @@ import {
   updateSolutionById,
   solutionModel,
 } from "../db/solutions";
-// import { subSolutionModel } from "../db/subSolutions";
-// const multer = require("multer");
-const fs = require("fs");
 
-interface MulterRequest extends express.Request {
-  file: any;
-}
+const cloudinary = require("../utils/cloudinary");
 
 export const getAllSolutions = async (
   req: express.Request,
@@ -30,21 +25,26 @@ export const deleteSolution = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const url = req.protocol + "://" + req.get("host");
+  // const url = req.protocol + "://" + req.get("host");
   try {
     const { id } = req.params;
     const deletedSolution = await deleteSolutionById(id);
-
-    var prevImage = deletedSolution?.image?.replace(url + "/", "");
-    if (prevImage) {
-      fs.unlink("public/" + prevImage, (err: any) => {
-        if (err) {
-          throw err;
-        }
-
-        console.log("Delete File successfully.");
-      });
+    if (deletedSolution.image) {
+      const imgId = deletedSolution.image.public_id;
+      if (imgId) {
+        await cloudinary.uploader.destroy(imgId);
+      }
     }
+    // var prevImage = deletedSolution?.image?.replace(url + "/", "");
+    // if (prevImage) {
+    //   fs.unlink("public/" + prevImage, (err: any) => {
+    //     if (err) {
+    //       throw err;
+    //     }
+
+    //     console.log("Delete File successfully.");
+    //   });
+    // }
 
     // await subSolutionModel.updateMany(
     //   { _id: deletedSolution.subsolutions },
@@ -65,32 +65,38 @@ export const updateSolution = async (
   //   console.log(req.params, "params request");
   //   console.log(req.file, "file request");
   // }
-  const url = req.protocol + "://" + req.get("host");
+  // const url = req.protocol + "://" + req.get("host");
 
   try {
     const { id } = req.params;
-    const previousSolution = await solutionModel.find({ _id: id });
-    if (previousSolution[0]) {
-      var prevImage = previousSolution[0]?.image?.replace(url + "/", "");
-    }
+    const previousSolution: any = await solutionModel.find({ _id: id });
+    // if (previousSolution[0]) {
+    //   var prevImage = previousSolution[0]?.image?.replace(url + "/", "");
+    // }
     // console.log(prevImage, "this is prev image");
 
-    const updatedSolution = {
-      ...req.body,
-      image:
-        url + "/solution/" + (req as unknown as MulterRequest).file.filename,
+    const updatedSolution: any = {
+      title: req.body.title ? req.body.title : previousSolution.title,
+      description: req.body.description
+        ? req.body.description
+        : previousSolution.description,
     };
+    if (previousSolution.image !== "") {
+      const imgId = previousSolution[0].image.public_id;
+      if (imgId) {
+        await cloudinary.uploader.destroy(imgId);
+      }
+      const newImg = await cloudinary.uploader.upload(req.body.image, {
+        folder: "solutions",
+      });
+      updatedSolution.image = {
+        public_id: newImg.public_id,
+        url: newImg.secure_url,
+      };
+    }
 
     const newSolution = await updateSolutionById(id, updatedSolution);
-    if (prevImage) {
-      fs.unlink("public/" + prevImage, (err: any) => {
-        if (err) {
-          throw err;
-        }
 
-        console.log("Delete File successfully.");
-      });
-    }
     return res.status(200).json(newSolution).end();
   } catch (error) {
     console.log(error);
@@ -102,28 +108,22 @@ export const createSolution = async (
   req: express.Request,
   res: express.Response
 ) => {
-  console.log(req.body, "this is the body of request");
-
-  const url = req.protocol + "://" + req.get("host");
-  const newSolution = new solutionModel({
-    ...req.body,
-    image: url + "/solution/" + (req as unknown as MulterRequest).file.filename,
-  });
-  // const imageName = req.file.filename;
-  // const description = req.body.description;
-  // const title = req.body.title;
-  // const subsolutions = req.body.subSolutions;
-
-  // Save this data to a database probably
-
-  // console.log(description, title, subsolutions);
-  // const upload = multer({ dest: "images/" });
   try {
+    const result = await cloudinary.uploader.upload(req.body.image, {
+      folder: "solutions",
+    });
+    const newSolution = new solutionModel({
+      ...req.body,
+      image: {
+        public_id: result.public_id,
+        url: result.secure_url,
+      },
+    });
+
     await newSolution.save();
 
     return res.status(200).json(newSolution).end();
   } catch (error) {
-    // console.log(error);
     res.sendStatus(400);
   }
 };
@@ -133,14 +133,11 @@ export const getSolution = async (
 ) => {
   try {
     const { id } = req.params;
-    // console.log(id, "this is ID");
 
     const solution = await getSolutionById(id);
-    // console.log(solution);
 
     return res.status(200).json(solution);
   } catch (error) {
-    // console.log(error);
     res.sendStatus(400);
   }
 };

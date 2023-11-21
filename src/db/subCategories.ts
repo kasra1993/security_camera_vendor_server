@@ -1,7 +1,16 @@
 import mongoose from "mongoose";
 const SubCategorySchema = new mongoose.Schema(
   {
-    image: { type: String, required: true },
+    image: {
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
+    },
     slug: { type: String, required: false },
     title: { type: String, required: true },
     description: { type: String, required: true },

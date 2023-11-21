@@ -11,6 +11,9 @@ import { subCategoryModel } from "../db/subCategories";
 import { difference } from "../helpers";
 import { categoryModel } from "../db/categories";
 import { ProductModel } from "../db/products";
+import { Description } from "@material-ui/icons";
+const cloudinary = require("../utils/cloudinary");
+
 // import { stringify } from "querystring";
 
 interface MulterRequest extends express.Request {
@@ -33,21 +36,27 @@ export const deleteSubCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const url = req.protocol + "://" + req.get("host");
+  // const url = req.protocol + "://" + req.get("host");
 
   try {
     const { id } = req.params;
     const deletedSubCategory = await deleteSubCategoryById(id);
-    const prevImage = deletedSubCategory!.image.replace(url + "/", "");
-    if (prevImage) {
-      fs.unlink("public/" + prevImage, (err: any) => {
-        if (err) {
-          throw err;
-        }
-
-        console.log("Delete File successfully.");
-      });
+    if (deletedSubCategory.image) {
+      const imgId = deletedSubCategory.image.public_id;
+      if (imgId) {
+        await cloudinary.uploader.destroy(imgId);
+      }
     }
+    // const prevImage = deletedSubCategory!.image.replace(url + "/", "");
+    // if (prevImage) {
+    //   fs.unlink("public/" + prevImage, (err: any) => {
+    //     if (err) {
+    //       throw err;
+    //     }
+
+    //     console.log("Delete File successfully.");
+    //   });
+    // }
     await categoryModel.updateMany(
       { _id: deletedSubCategory!.categories },
       { $pull: { subcategories: deletedSubCategory!._id } }
@@ -67,54 +76,65 @@ export const updateSubCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  // if (req.body || req.file || req.params) {
-  //   console.log(req.body, "body request");
-  //   console.log(req.params, "params request");
-  //   console.log(req.file, "file request");
-  // }
-  const url = req.protocol + "://" + req.get("host");
-
   try {
     const _id = req.params.id;
-
-    const updatedSubCategory = {
-      ...req.body,
-      image:
-        url + "/subcategory/" + (req as unknown as MulterRequest).file.filename,
+    const oldSubCategory: any = await subCategoryModel.findOne({ _id });
+    const updatedSubCategory: any = {
+      // ...req.body,
+      title: req.body.title ? req.body.title : oldSubCategory.title,
+      description: req.body.description
+        ? req.body.description
+        : oldSubCategory.description,
+      slug: req.body.slug ? req.body.slug : oldSubCategory.slug,
+      categories: req.body.categories,
     };
-    if (!updatedSubCategory) {
-      return res.sendStatus(400);
+    if (oldSubCategory.image !== "") {
+      // const imgId = oldSubCategory[0].image.public_id;
+      const imgId = oldSubCategory.image.public_id;
+      if (imgId) {
+        await cloudinary.uploader.destroy(imgId);
+      }
+      const newImg = await cloudinary.uploader.upload(req.body.image, {
+        folder: "subcategories",
+      });
+      updatedSubCategory.image = {
+        public_id: newImg.public_id,
+        url: newImg.secure_url,
+      };
     }
-    const newCategories = updatedSubCategory!.categories || [];
-    const oldSubCategory = await subCategoryModel.findOne({ _id });
-    const oldCategories = oldSubCategory?.categories;
+    // if (!updatedSubCategory) {
+    //   return res.sendStatus(400);
+    // }
+    const newCategories: any = updatedSubCategory!.categories || [];
+    // console.log(newCategories, "newCategories");
+
+    const oldCategories: any = oldSubCategory?.categories;
+    // console.log(oldCategories, "oldCategories");
     // these are new ids turned into objectIDs with looping
     let newCategoryIds = [];
-    if (newCategories instanceof Array) {
-      newCategoryIds = newCategories.map(
-        (cat: { _id: string }) => new mongoose.Types.ObjectId(cat._id)
-      );
-    } else {
-      newCategoryIds.push(new mongoose.Types.ObjectId(newCategories._id));
+    if (newCategories !== "") {
+      //   newCategoryIds = newCategories.map(
+      //     (cat: { _id: string }) => new mongoose.Types.ObjectId(cat._id)
+      //   );
+      // } else {
+      // newCategoryIds.push(new mongoose.Types.ObjectId(newCategories._id));
+      newCategoryIds.push(new mongoose.Types.ObjectId(newCategories));
     }
+    // console.log(newCategoryIds, "new category ids");
 
-    const prevImage = oldSubCategory?.image?.replace(url + "/", "");
     if (oldSubCategory) {
       Object.assign(oldSubCategory, updatedSubCategory);
     }
-    const newSubCategory = await oldSubCategory!.save();
-    if (prevImage) {
-      fs.unlink("public/" + prevImage, (err: any) => {
-        if (err) {
-          throw err;
-        }
+    // console.log(oldSubCategory, "old sub cateogry");
 
-        console.log("Delete File successfully.");
-      });
-    }
+    const newSubCategory = await oldSubCategory!.save();
+    console.log(newSubCategory, "new sub category");
 
     const added = difference(newCategoryIds, oldCategories);
+    console.log(added, "added");
+
     const removed = difference(oldCategories, newCategoryIds);
+    console.log(removed, "removed");
 
     await categoryModel.updateMany(
       { _id: removed },
@@ -135,15 +155,21 @@ export const createSubCategory = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const url = req.protocol + "://" + req.get("host");
-  const newSubCategory = new subCategoryModel({
-    ...req.body,
-    image:
-      url + "/subcategory/" + (req as unknown as MulterRequest).file.filename,
-  });
-  console.log(newSubCategory);
-
   try {
+    const result = await cloudinary.uploader.upload(req.body.image, {
+      folder: "subcategories",
+    });
+    // const url = req.protocol + "://" + req.get("host");
+    const newSubCategory = new subCategoryModel({
+      ...req.body,
+      image: {
+        public_id: result.public_id,
+        url: result.secure_url,
+      },
+      // url + "/subcategory/" + (req as unknown as MulterRequest).file.filename,
+    });
+    // console.log(newSubCategory);
+
     await newSubCategory.save();
 
     await categoryModel.updateMany(
