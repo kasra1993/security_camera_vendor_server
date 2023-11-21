@@ -35,7 +35,7 @@ export const deleteAffiliate = async (
   // const url = req.protocol + "://" + req.get("host");
   try {
     const { id } = req.params;
-    const deletedAffiliate = await deleteAffiliateById(id);
+    const deletedAffiliate: any = await deleteAffiliateById(id);
     // console.log(deletedAffiliate, "deleted affiliate");
 
     // const prevImage = deletedAffiliate?.image?.replace(url + "/", "");

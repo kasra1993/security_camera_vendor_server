@@ -37,7 +37,7 @@ export const deleteCategory = async (
   // const url = req.protocol + "://" + req.get("host");
   try {
     const { id } = req.params;
-    const deletedCategory = await deleteCategoryById(id);
+    const deletedCategory: any = await deleteCategoryById(id);
     // console.log(deletedCategory, "deleted category");
 
     if (deletedCategory.image) {

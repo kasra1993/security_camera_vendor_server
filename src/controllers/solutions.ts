@@ -28,7 +28,7 @@ export const deleteSolution = async (
   // const url = req.protocol + "://" + req.get("host");
   try {
     const { id } = req.params;
-    const deletedSolution = await deleteSolutionById(id);
+    const deletedSolution: any = await deleteSolutionById(id);
     if (deletedSolution.image) {
       const imgId = deletedSolution.image.public_id;
       if (imgId) {

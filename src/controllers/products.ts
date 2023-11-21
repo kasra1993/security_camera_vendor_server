@@ -11,9 +11,9 @@ import { difference } from "../helpers";
 // const fs = require("fs");
 const cloudinary = require("../utils/cloudinary");
 
-interface MulterRequest extends express.Request {
-  file: any;
-}
+// interface MulterRequest extends express.Request {
+//   file: any;
+// }
 
 export const getAllProducts = async (
   req: express.Request,
@@ -35,9 +35,9 @@ export const deleteProduct = async (
 
   try {
     const { id } = req.params;
-    const product = await deleteProductById(id);
+    const product: any = await deleteProductById(id);
     if (product.image) {
-      const imgId = product.image.public_id;
+      const imgId = product?.image?.public_id;
       if (imgId) {
         await cloudinary.uploader.destroy(imgId);
       }
@@ -67,7 +67,7 @@ export const deleteProduct = async (
 export const updateProduct = async (
   req: express.Request<{
     id: any;
-    file: any;
+
     params: any;
   }>,
   res: express.Response

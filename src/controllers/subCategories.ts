@@ -40,7 +40,7 @@ export const deleteSubCategory = async (
 
   try {
     const { id } = req.params;
-    const deletedSubCategory = await deleteSubCategoryById(id);
+    const deletedSubCategory: any = await deleteSubCategoryById(id);
     if (deletedSubCategory.image) {
       const imgId = deletedSubCategory.image.public_id;
       if (imgId) {
