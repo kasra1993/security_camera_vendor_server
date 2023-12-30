@@ -1,21 +1,30 @@
 import express from "express";
-// import authentication from "./authentication";
-// import users from "./users";
-import products from "./products";
-import categories from "./categories";
-import subCategories from "./subCategories";
-import solutions from "./solutions";
-import affiliates from "./affiliates";
+
+import users from "./users";
+import auth from "./auth";
+import materialGrades from "./materials/materialGrades";
+import materialGroups from "./materials/materialGroups";
+import materialNames from "./materials/materialNames";
+import materialProviders from "./materials/materialProviders";
+import partNames from "./parts/partNames";
+import partGroups from "./parts/partGroups";
+import partsGeneralIds from "./parts/partsGeneralIds";
+import partProviders from "./parts/partProviders";
+import getAll from "./getAll";
 const router = express.Router();
 
 export default (): express.Router => {
-  // authentication(router);
-  // users(router);
-  products(router);
-  subCategories(router);
-  categories(router);
-  solutions(router);
-  affiliates(router);
+  users(router);
+  auth(router);
+  materialGrades(router);
+  materialGroups(router);
+  materialNames(router);
+  materialProviders(router);
+  partNames(router);
+  partGroups(router);
+  partsGeneralIds(router);
+  partProviders(router);
+  getAll(router);
 
   return router;
 };

@@ -1,12 +1,3 @@
-import crypto from "crypto";
-const SECRET = "ERFUN-PROJECT";
-export const random = () => crypto.randomBytes(128).toString("base64");
-export const authentication = (salt: string, password: string) => {
-  return crypto
-    .createHmac("sha256", [salt, password].join("/"))
-    .update(SECRET)
-    .digest("hex");
-};
 export const difference = (A: any, B: any) => {
   const arrA = Array.isArray(A) ? A.map((x) => x.toString()) : [A.toString()];
   const arrB = Array.isArray(B) ? B.map((x) => x.toString()) : [B.toString()];
