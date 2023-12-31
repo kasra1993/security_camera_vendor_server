@@ -6,7 +6,7 @@ import {
   createSolution,
   getSolution,
 } from "../controllers/solutions";
-import { isAuthenticated, isOwner } from "../middlewares";
+
 // const multer = require("multer");
 // const uuidv4 = require("uuid/v4");
 // const DIR = "./public/solution/";

@@ -8,6 +8,8 @@ import {
 } from "../db/products";
 import { subCategoryModel } from "../db/subCategories";
 import { difference } from "../helpers";
+import { categoryModel } from "../db/categories";
+import { solutionModel } from "../db/solutions";
 // const fs = require("fs");
 const cloudinary = require("../utils/cloudinary");
 
@@ -190,6 +192,14 @@ export const createProduct = async (
 
     await subCategoryModel.updateMany(
       { _id: newProduct!.subcategories },
+      { $addToSet: { products: newProduct!._id } }
+    );
+    await categoryModel.updateMany(
+      { _id: newProduct!.categories },
+      { $addToSet: { products: newProduct!._id } }
+    );
+    await solutionModel.updateMany(
+      { _id: newProduct!.solutions },
       { $addToSet: { products: newProduct!._id } }
     );
     return res.status(200).json(newProduct!).end();

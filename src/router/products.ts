@@ -6,7 +6,7 @@ import {
   createProduct,
   getProduct,
 } from "../controllers/products";
-import { isAuthenticated, isOwner } from "../middlewares";
+
 // const multer = require("multer");
 // const uuidv4 = require("uuid/v4");
 // const DIR = "./public/product";

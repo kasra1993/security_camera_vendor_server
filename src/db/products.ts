@@ -14,8 +14,10 @@ const ProductSchema = new mongoose.Schema(
     series: { type: String, required: false },
     model: { type: String, required: true },
     price: { type: Number, required: true },
+    quantity: { type: Number, required: true },
     description: { type: String, required: true },
     features: { type: String, required: false },
+    title: { type: String, required: false },
 
     slug: { type: String, required: false },
     categories: [
@@ -29,6 +31,13 @@ const ProductSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "SubCategory",
+        required: true,
+      },
+    ],
+    solutions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Solution",
         required: true,
       },
     ],
@@ -49,7 +58,11 @@ const ProductSchema = new mongoose.Schema(
 );
 
 export const ProductModel = mongoose.model("Product", ProductSchema);
-export const getProducts = () => ProductModel.find().populate("subcategories");
+export const getProducts = () =>
+  ProductModel.find()
+    .populate("subcategories")
+    .populate("categories")
+    .populate("solutions");
 
 export const getProductById = (id: any) => ProductModel.findById(id);
 

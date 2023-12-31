@@ -20,6 +20,13 @@ const CategorySchema = new mongoose.Schema(
         required: false,
       },
     ],
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: false,
+      },
+    ],
   },
   {
     timestamps: true,

@@ -39,7 +39,7 @@ export const subCategoryModel = mongoose.model(
   SubCategorySchema
 );
 export const getSubCategories = () =>
-  subCategoryModel.find().populate("categories");
+  subCategoryModel.find().populate("categories").populate("products");
 
 export const getSubCategoryById = (id: string) => subCategoryModel.findById(id);
 // export const createSubCategory = (values: any) =>
