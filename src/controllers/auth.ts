@@ -17,7 +17,7 @@ export const registerUser = async (
     email: req.body.email,
     password: CryptoJS.AES.encrypt(
       req.body.password,
-      process.env.PASS_SEC
+      process.env.PASS_SECRET as string
     ).toString(),
     isAdmin: true,
   });
@@ -47,7 +47,7 @@ export const loginUser = async (
 
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
-      process.env.PASS_SEC
+      process.env.PASS_SECRET as string
     );
     const OriginalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
@@ -59,7 +59,7 @@ export const loginUser = async (
         id: user._id,
         isAdmin: user.isAdmin,
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET as string,
       { expiresIn: "3d" }
     );
 
