@@ -10,7 +10,7 @@ export const registerUser = async (
   req: express.Request,
   res: express.Response
 ) => {
-  console.log(req.body, "this is req body");
+  // console.log(req.body, "this is req body");
 
   const newUser = new userModel({
     username: req.body.username,
@@ -21,11 +21,11 @@ export const registerUser = async (
     ).toString(),
     isAdmin: true,
   });
-  console.log(newUser, "this is new user");
+  // console.log(newUser, "this is new user");
 
   try {
     const savedUser = await newUser.save();
-    console.log("it worked");
+    // console.log("it worked");
 
     res.status(201).json(savedUser);
   } catch (err) {
@@ -39,19 +39,17 @@ export const loginUser = async (
   req: express.Request,
   res: express.Response
 ) => {
-  console.log(req.body);
+  // console.log(req.body, "this is the body coming in ");
 
   try {
     const user: any = await userModel.findOne({ username: req.body.username });
     !user && res.status(401).json("Wrong credentials!");
-    console.log(user, "this is user");
 
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
       process.env.PASS_SEC
     );
     const OriginalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-    console.log(OriginalPassword);
 
     OriginalPassword !== req.body.password &&
       res.status(401).json("Wrong credentials!");
@@ -64,10 +62,8 @@ export const loginUser = async (
       process.env.JWT_SECRET,
       { expiresIn: "3d" }
     );
-    console.log(accessToken, "access token");
 
     const { password, ...others } = user._doc;
-    console.log(user._doc);
 
     res.status(200).json({ ...others, accessToken });
   } catch (err) {
