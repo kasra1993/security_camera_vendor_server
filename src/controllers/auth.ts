@@ -17,7 +17,7 @@ export const registerUser = async (
     email: req.body.email,
     password: CryptoJS.AES.encrypt(
       req.body.password,
-      process.env.PASS_SECRET as string
+      process.env.PASS_SEC as string
     ).toString(),
     isAdmin: true,
   });
@@ -39,17 +39,16 @@ export const loginUser = async (
   req: express.Request,
   res: express.Response
 ) => {
-  // console.log(req.body, "this is the body coming in ");
-
   try {
     const user: any = await userModel.findOne({ username: req.body.username });
     !user && res.status(401).json("Wrong credentials!");
 
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
-      process.env.PASS_SECRET as string
+      process.env.PASS_SEC as string
     );
     const OriginalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
+    // console.log(OriginalPassword, "original pass");
 
     OriginalPassword !== req.body.password &&
       res.status(401).json("Wrong credentials!");
@@ -62,6 +61,7 @@ export const loginUser = async (
       process.env.JWT_SECRET as string,
       { expiresIn: "3d" }
     );
+    // console.log(accessToken, "this is the access token ");
 
     const { password, ...others } = user._doc;
 
