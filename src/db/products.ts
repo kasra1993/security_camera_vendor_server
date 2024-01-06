@@ -38,7 +38,7 @@ const ProductSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Solution",
-        required: true,
+        required: false,
       },
     ],
     // countInStock: {
