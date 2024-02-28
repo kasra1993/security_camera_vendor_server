@@ -64,7 +64,8 @@ export const getProducts = () =>
     .populate("categories")
     .populate("solutions");
 
-export const getProductById = (id: any) => ProductModel.findById(id);
+export const getProductById = (id: any) =>
+  ProductModel.findById(id).populate("subcategories");
 
 export const deleteProductById = (id: any) =>
   ProductModel.findOneAndDelete({ _id: id });

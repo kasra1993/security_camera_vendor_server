@@ -87,8 +87,6 @@ export const updateProduct = async (
       return res.sendStatus(400);
     }
     if (req.body.image) {
-      console.log("this shouldnt be shown");
-
       // const imgId = oldSubCategory[0].image.public_id;
       const imgId = oldProduct.image.public_id;
       if (imgId) {
