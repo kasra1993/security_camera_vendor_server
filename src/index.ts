@@ -1,6 +1,5 @@
 import express from "express";
-// import http from "http";
-import https from "https";
+import http from "http";
 
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -25,9 +24,9 @@ app.use(cookieParser());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-const server = https.createServer(app);
+const server = http.createServer(app);
 server.listen(8080, () => {
-  console.log("server running on 8080");
+  console.log("server running on http://localhost:8080/");
   console.log("working great");
 });
 
