@@ -1,5 +1,7 @@
 import express from "express";
-import http from "http";
+// import http from "http";
+import https from "https";
+
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import compression from "compression";
@@ -13,6 +15,7 @@ import router from "./router";
 dotenv.config();
 
 const app = express();
+
 app.use(cors());
 app.use(express.static("public"));
 
@@ -22,9 +25,9 @@ app.use(cookieParser());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-const server = http.createServer(app);
+const server = https.createServer(app);
 server.listen(8080, () => {
-  console.log("server running on http://localhost:8080/");
+  console.log("server running on 8080");
   console.log("working great");
 });
 
