@@ -21,6 +21,8 @@ app.use(express.static("public"));
 app.use(compression());
 app.use(cookieParser());
 
+app.enable("trust proxy");
+
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
@@ -28,6 +30,14 @@ const server = http.createServer(app);
 server.listen(8080, () => {
   console.log("server running on http://localhost:8080/");
   console.log("working great");
+});
+
+app.use(function (request, response, next) {
+  if (process.env.NODE_ENV != "development") {
+    return response.redirect("https://" + request.headers.host + request.url);
+  }
+
+  next();
 });
 
 mongoose.Promise = Promise;
