@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import http from "http";
 import https from "https";
 import fs from "fs";
 
@@ -38,11 +37,6 @@ const httpsServer = https.createServer(
   app
 );
 httpsServer.listen(8080, () => {
-  console.log("server running on http://localhost:8080/");
-  console.log("working great");
-});
-const httpServer = http.createServer(app);
-httpServer.listen(8080, () => {
   console.log("server running on http://localhost:8080/");
   console.log("working great");
 });
