@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import https from "https";
+import http from "http";
 import fs from "fs";
 
 import bodyParser from "body-parser";
@@ -24,19 +25,19 @@ app.use(cookieParser());
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-
-const httpsServer = https.createServer(
-  {
-    key: fs.readFileSync(
-      "/etc/letsencrypt/live/server.securitycameravendor.com/privkey.pem"
-    ),
-    cert: fs.readFileSync(
-      "/etc/letsencrypt/live/server.securitycameravendor.com/fullchain.pem"
-    ),
-  },
-  app
-);
-httpsServer.listen(8080, () => {
+const httpServer = http.createServer(app);
+// const httpsServer = https.createServer(
+//   {
+//     key: fs.readFileSync(
+//       "/etc/letsencrypt/live/server.securitycameravendor.com/privkey.pem"
+//     ),
+//     cert: fs.readFileSync(
+//       "/etc/letsencrypt/live/server.securitycameravendor.com/fullchain.pem"
+//     ),
+//   },
+//   app
+// );
+httpServer.listen(8080, () => {
   console.log("server running on http://localhost:8080/");
   console.log("working great");
 });
